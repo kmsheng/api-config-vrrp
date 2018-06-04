@@ -1,0 +1,418 @@
+---
+swagger: "2.0"
+info:
+  description: Provides the VRRP configuration interface
+  version: 1.0.0
+  title: VRRP API
+host: virtserver.swaggerhub.com
+basePath: /kmsheng/sanji-vrrp-ui/1.0.0
+schemes:
+- https
+- http
+produces:
+- application/json
+paths:
+  /network/vrrp:
+    get:
+      description: |
+        Get VRRP setting
+      parameters: []
+      responses:
+        200:
+          description: |
+            VRRP setting
+          schema:
+            $ref: '#/definitions/VrrpSetting'
+          examples:
+            application/json:
+              $ref: '#/externalDocs/x-mocks/VrrpSettingExample'
+    put:
+      description: |
+        Update VRRP setting
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/VrrpSetting'
+      responses:
+        200:
+          description: |
+            VRRP setting
+          schema:
+            $ref: '#/definitions/VrrpSetting'
+          examples:
+            application/json:
+              $ref: '#/externalDocs/x-mocks/VrrpSettingExample'
+            x-override-response: true
+  /network/vrrp/interfaces:
+    get:
+      description: |
+        Get all VRRP interface setting
+      parameters: []
+      responses:
+        200:
+          description: |
+            All VRRP interface setting
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/VrrpEntry_Id'
+          examples:
+            application/json:
+              $ref: '#/externalDocs/x-mocks/VrrpInterfacesExample'
+    post:
+      description: |
+        Create new VRRP interface setting
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/VrrpEntry'
+      responses:
+        200:
+          description: |
+            VRRP interface setting
+          schema:
+            $ref: '#/definitions/VrrpEntry_Id'
+          examples:
+            application/json:
+              $ref: '#/externalDocs/x-mocks/VrrpEntryIdExample'
+    put:
+      description: |
+        Update all VRRP interface setting
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/VrrpEntry_Id'
+      responses:
+        200:
+          description: |
+            All VRRP interface setting
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/VrrpEntry_Id'
+          examples:
+            application/json:
+              $ref: '#/externalDocs/x-mocks/VrrpInterfacesExample_Put'
+    delete:
+      description: |
+        Delete selected VRRP interface setting
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: |
+            Deleted ID of VRRP interface setting
+          schema:
+            type: array
+            items:
+              type: integer
+          examples:
+            application/json:
+              $ref: '#/externalDocs/x-mocks/VrrpInterfacesExample_Delete'
+  /network/vrrp/interfaces/{id}:
+    get:
+      description: |
+        Get VRRP interface setting
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+      responses:
+        200:
+          description: |
+            VRRP interface setting
+          schema:
+            $ref: '#/definitions/VrrpEntry'
+          examples:
+            application/json:
+              $ref: '#/externalDocs/x-mocks/VrrpEntryExample'
+    put:
+      description: |
+        Update VRRP interface setting
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/VrrpEntry'
+      responses:
+        200:
+          description: |
+            VRRP interface setting
+          schema:
+            $ref: '#/definitions/VrrpEntry'
+          examples:
+            application/json:
+              $ref: '#/externalDocs/x-mocks/VrrpEntryExample_Put'
+    delete:
+      description: |
+        Delete VRRP interface setting
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+      responses:
+        200:
+          description: |
+            Delete success
+definitions:
+  VrrpSetting:
+    required:
+    - enable
+    properties:
+      enable:
+        type: boolean
+        description: |
+          Enable VRRP Service
+      status:
+        type: boolean
+        description: |
+          VRRP Service status
+        readOnly: true
+    title: VRRP Setting
+    example:
+      $ref: '#/externalDocs/x-mocks/VrrpSettingExample'
+  VrrpEntry:
+    required:
+    - enable
+    - interface
+    - virtualIp
+    - vrid
+    properties:
+      enable:
+        type: boolean
+        description: |
+          Enable entry
+        default: false
+      interface:
+        type: string
+        description: |
+          Network interface for VRRP
+      vrid:
+        type: integer
+        description: |
+          VRRP Virtual Router ID
+        minimum: 1
+        maximum: 255
+      virtualIp:
+        type: string
+        description: |
+          VRRP Virtual IP
+        pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+      ip:
+        type: string
+        description: |
+          IP of interface
+        readOnly: true
+      stats:
+        type: string
+        description: |
+          VRRP router status, one of `None`, `Init`, `Master`, `Backup`
+        readOnly: true
+      priority:
+        type: integer
+        description: |
+          Determines priority in a VRRP group
+        minimum: 1
+        maximum: 254
+      auth:
+        type: string
+        description: |
+          Authentication type, one of `No Authentication`, `Simple Text Password`, `IP Authentication Header`
+        pattern: ^(none|simple|ah)$
+        default: none
+      password:
+        type: string
+        description: |
+          Authentication password, empty for `None`, `Simple` up to `8` bytes, `AH` up to `16` bytes
+        minLength: 0
+        maxLength: 16
+      advertInt:
+        type: integer
+        description: |
+          Advertisement interval
+        minimum: 1
+        maximum: 255
+      preemption:
+        type: boolean
+        description: |
+          Preemption mode
+        default: true
+    title: VRRP Entry
+    example:
+      $ref: '#/externalDocs/x-mocks/VrrpEntryExample'
+  VrrpEntry_Id:
+    required:
+    - enable
+    - id
+    - interface
+    - virtualIp
+    - vrid
+    properties:
+      id:
+        type: integer
+        description: |
+          Entry ID
+      enable:
+        type: boolean
+        description: |
+          Enable entry
+        default: false
+      interface:
+        type: string
+        description: |
+          Network interface for VRRP
+      vrid:
+        type: integer
+        description: |
+          VRRP Virtual Router ID
+        minimum: 1
+        maximum: 255
+      virtualIp:
+        type: string
+        description: |
+          VRRP Virtual IP
+        pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+      ip:
+        type: string
+        description: |
+          IP of interface
+        readOnly: true
+      stats:
+        type: string
+        description: |
+          VRRP router status, one of `None`, `Init`, `Master`, `Backup`
+        readOnly: true
+      priority:
+        type: integer
+        description: |
+          Determines priority in a VRRP group
+        minimum: 1
+        maximum: 254
+      auth:
+        type: string
+        description: |
+          Authentication type, one of `No Authentication`, `Simple Text Password`, `IP Authentication Header`
+        pattern: ^(none|simple|ah)$
+        default: none
+      password:
+        type: string
+        description: |
+          Authentication password, empty for `None`, `Simple` up to `8` bytes, `AH` up to `16` bytes
+        minLength: 0
+        maxLength: 16
+      advertInt:
+        type: integer
+        description: |
+          Advertisement interval
+        minimum: 1
+        maximum: 255
+      preemption:
+        type: boolean
+        description: |
+          Preemption mode
+        default: true
+    title: VRRP Entry with ID
+    example:
+      $ref: '#/externalDocs/x-mocks/VrrpEntryIdExample'
+externalDocs:
+  url: http://#
+  x-mocks:
+    VrrpSettingExample:
+      enable: false
+      status: false
+    VrrpInterfacesExample:
+    - id: 1
+      enable: true
+      interface: eth0
+      vrid: 1
+      virtualIp: 192.168.3.250
+      ip: 192.168.3.1
+      status: Init
+      priority: 100
+      auth: none
+      password: ""
+      advertInt: 1
+      preemption: true
+    - id: 2
+      enable: false
+      interface: eth1
+      vrid: 2
+      virtualIp: 192.168.4.250
+      ip: 192.168.4.1
+      status: None
+      priority: 100
+      auth: simple
+      password: Password
+      advertInt: 1
+      preemption: true
+    VrrpInterfacesExample_Put:
+    - id: 1
+      enable: true
+      interface: eth0
+      vrid: 1
+      virtualIp: 192.168.3.250
+    - id: 2
+      enable: false
+      interface: eth1
+      vrid: 2
+      virtualIp: 192.168.4.250
+      priority: 100
+      auth: simple
+      password: Password
+      advertInt: 1
+      preemption: true
+    VrrpInterfacesExample_Delete:
+    - 1
+    - 2
+    - 3
+    VrrpEntryExample:
+      enable: true
+      interface: eth0
+      vrid: 1
+      virtualIp: 192.168.3.250
+      ip: 192.168.3.1
+      status: Init
+      priority: 100
+      auth: none
+      password: ""
+      advertInt: 1
+      preemption: true
+    VrrpEntryExample_Put:
+      enable: true
+      interface: eth0
+      vrid: 1
+      virtualIp: 192.168.3.250
+    VrrpEntryIdExample:
+      id: 1
+      enable: true
+      interface: eth0
+      vrid: 1
+      virtualIp: 192.168.3.250
+      ip: 192.168.3.1
+      status: Init
+      priority: 100
+      auth: none
+      password: ""
+      advertInt: 1
+      preemption: true
