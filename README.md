@@ -1,1 +1,1 @@
-# swagger-api-config-vrrp
+# api-config-vrrp
